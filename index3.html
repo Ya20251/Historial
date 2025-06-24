@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Envío - Yape</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+      text-align: center;
+      overflow-y: auto;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .formulario {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 20px auto;
+    }
+    .formulario input[type="text"],
+    .formulario input[type="time"] {
+      padding: 8px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .container {
+      position: relative;
+      width: 360px;
+      height: 740px;
+      margin: 0 auto;
+      background-image: url('IMG-20250623-WA0035.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border: 2px solid #ccc;
+    }
+    .campo {
+      position: absolute;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 15px;
+      user-select: none;
+      white-space: nowrap;
+    }
+    #nombre {
+      top: 149px; left: 10px; color: #000333; font-weight: 800;
+    }
+    #monto {
+      top: 157px; right: 10px; color: #e03f4e; font-weight: 800;
+      text-align: right;
+    }
+    #hora {
+      top: 170px; left: 10px; color: #999; font-weight: 500;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #3b00a1;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #290070;
+    }
+    #fullscreenImage {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      background-color: black;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <h2>Historial de envío</h2>
+  <div class="formulario">
+    <input type="text" id="inputNombre" placeholder="Nombre">
+    <input type="text" id="inputMonto" placeholder="Monto (S/)">
+    <input type="time" id="inputHora" placeholder="Hora">
+  </div>
+
+  <div class="container" id="comprobante">
+    <div class="campo" id="nombre">Nombre</div>
+    <div class="campo" id="monto">- S/ 0.00</div>
+    <div class="campo" id="hora">Hoy 00:00 a.m.</div>
+  </div>
+
+  <button onclick="generarVistaPrevia()">Generar vista previa</button>
+  <button onclick="generarCaptura()">Ver en pantalla completa comprobante generado</button>
+
+  <img id="fullscreenImage" onclick="salirPantallaCompleta()" />
+
+  <script>
+    function actualizarCampos() {
+      const nombre = document.getElementById("inputNombre").value || "Nombre";
+      const monto = document.getElementById("inputMonto").value || "0.00";
+      const hora = document.getElementById("inputHora").value;
+
+      document.getElementById("nombre").innerText = nombre;
+      document.getElementById("monto").innerText = "- S/ " + monto;
+
+      if (hora) {
+        const [h, m] = hora.split(":");
+        const hh = parseInt(h);
+        const periodo = hh >= 12 ? "p.m." : "a.m.";
+        const hora12 = ((hh + 11) % 12 + 1);
+        document.getElementById("hora").innerText = `Hoy ${hora12}:${m} ${periodo}`;
+      }
+    }
+
+    function generarVistaPrevia() {
+      actualizarCampos();
+      alert("Vista previa actualizada. Verifica los datos sobre el comprobante.");
+    }
+
+    function generarCaptura() {
+      actualizarCampos();
+      const comprobante = document.getElementById("comprobante");
+
+      html2canvas(comprobante, { scale: 4 }).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const img = document.getElementById('fullscreenImage');
+        img.src = imgData;
+        img.style.display = 'block';
+
+        if (img.requestFullscreen) img.requestFullscreen();
+        else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
+        else if (img.msRequestFullscreen) img.msRequestFullscreen();
+
+        setTimeout(() => {
+          const link = document.createElement('a');
+          link.download = 'comprobante_yape_4k.png';
+          link.href = imgData;
+          link.click();
+        }, 5000);
+      });
+    }
+
+    function salirPantallaCompleta() {
+      const img = document.getElementById('fullscreenImage');
+      img.style.display = 'none';
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+    }
+  </script>
+</body>
+</html>
+
