@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Historial de Envío - Yape</title>
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js "></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -83,11 +83,36 @@
       left: 0;
       z-index: 9999;
     }
+    .instagram-button {
+      margin-top: 10px;
+      padding: 8px 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #E1306C;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .instagram-button:hover {
+      background-color: #B62A5D;
+    }
+    #accessCodeSection {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
   <h2>Historial de envío</h2>
-  <div class="formulario">
+
+  <div id="accessCodeSection">
+    <p>Para acceder al generador, necesitas un código de acceso.</p>
+    <a href="https://www.instagram.com/pumbafloo?igsh=MXdmOW1rcG5ybzRleg==" target="_blank" class="instagram-button">Contactar en Instagram</a>
+    <input type="text" id="inputAccessCode" placeholder="Ingresa el código de acceso">
+    <button onclick="validarCodigoAcceso()">Validar Código</button>
+  </div>
+
+  <div class="formulario" id="formulario" style="display: none;">
     <input type="text" id="inputNombre" placeholder="Nombre">
     <input type="text" id="inputMonto" placeholder="Monto (S/)">
     <input type="time" id="inputHora" placeholder="Hora">
@@ -99,12 +124,27 @@
     <div class="campo" id="hora">Hoy 00:00 a.m.</div>
   </div>
 
-  <button onclick="generarVistaPrevia()">Generar vista previa</button>
-  <button onclick="generarCaptura()">Ver en pantalla completa comprobante generado</button>
+  <button onclick="generarVistaPrevia()" id="btnGenerar" style="display: none;">Generar vista previa</button>
+  <button onclick="generarCaptura()" id="btnCaptura" style="display: none;">Ver en pantalla completa comprobante generado</button>
 
   <img id="fullscreenImage" onclick="salirPantallaCompleta()" />
 
   <script>
+    const CODIGO_ACCESO_CORRECTO = "0000202506";
+
+    function validarCodigoAcceso() {
+      const codigoIngresado = document.getElementById('inputAccessCode').value;
+      if (codigoIngresado === CODIGO_ACCESO_CORRECTO) {
+        alert("Código de acceso válido. ¡Bienvenido!");
+        document.getElementById('accessCodeSection').style.display = 'none';
+        document.getElementById('formulario').style.display = 'grid';
+        document.getElementById('btnGenerar').style.display = 'inline-block';
+        document.getElementById('btnCaptura').style.display = 'inline-block';
+      } else {
+        alert("Código de acceso incorrecto. Inténtalo nuevamente.");
+      }
+    }
+
     function actualizarCampos() {
       const nombre = document.getElementById("inputNombre").value || "Nombre";
       const monto = document.getElementById("inputMonto").value || "0.00";
@@ -160,4 +200,3 @@
   </script>
 </body>
 </html>
-
